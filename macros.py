@@ -17,7 +17,7 @@ def include_partial(
     start=0,
     end=None,
     lines=0,
-    dedent=0,
+    dedent=True,
     keep_trailing_whitespace=False,
     start_match="",
     end_match="",
@@ -37,7 +37,8 @@ def include_partial(
              Use negative numbers to index from end of file (e.g. -3 to skip last 3 lines of file)
              Must be greater than start, otherwise no content will be returned.
         lines: number of lines to return (takes precedence over end and end_match)
-        dedent: if True, dedent by indentation of first line to be returned
+        dedent: dedent by indentation of first line to be returned (default: True)
+                alternatively, provide an integer value to dedent by that amount
         start_match: find start by providing text that shall match the first line
         end_match: find end by providing text that shall match the last line
                    cannot be used together with *lines*
