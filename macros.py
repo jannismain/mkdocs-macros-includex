@@ -12,18 +12,18 @@ def define_env(env):
 
 
 def include_partial(
-    filepath,
-    start=0,
-    end=None,
-    lines=0,
+    filepath: pathlib.Path,
+    start: int = 0,
+    end: int = None,
+    lines: int = 0,
     dedent=True,
-    indent=0,
-    indent_char=" ",
-    keep_trailing_whitespace=False,
-    start_match="",
-    end_match="",
-    start_offset=0,
-    end_offset=1,
+    indent: int = 0,
+    indent_char: str = " ",
+    keep_trailing_whitespace: bool = False,
+    start_match: str = "",
+    end_match: str = "",
+    start_offset: int = 0,
+    end_offset: int = 1,
 ) -> str:
     """Include parts of a file.
 
@@ -54,7 +54,7 @@ def include_partial(
                     e.g. end_offset=1 will include the matched line in the output (default)
 
     Returns:
-        content of file at *filepath* that matches remaining arguments
+        content of file at *filepath*, restricted by remaining arguments
 
     """
     try:
