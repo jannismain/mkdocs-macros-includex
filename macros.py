@@ -8,7 +8,6 @@ import pathlib
 
 def define_env(env):
     """Define variables, macros and filters for mkdocs-macros."""
-
     env.macro(include_partial)
 
 
@@ -18,6 +17,8 @@ def include_partial(
     end=None,
     lines=0,
     dedent=True,
+    indent=0,
+    indent_char=" ",
     keep_trailing_whitespace=False,
     start_match="",
     end_match="",
@@ -39,6 +40,8 @@ def include_partial(
         lines: number of lines to return (takes precedence over end and end_match)
         dedent: dedent by indentation of first line to be returned (default: True)
                 alternatively, provide an integer value to dedent by that amount
+        indent: add this many *indent_char*s to beginning of each line
+        indent_char: single character to use for indentation (default: " " → *space*)
         start_match: find start by providing text that shall match the first line
         end_match: find end by providing text that shall match the last line
                    cannot be used together with *lines*
@@ -77,7 +80,7 @@ def include_partial(
         if dedent == True and content:
             dedent = len(content[0]) - len(content[0].lstrip())
 
-        content = "".join([line[dedent:] for line in content])
+        content = "".join([indent_char * indent + line[dedent:] for line in content])
         return content.rstrip() if not keep_trailing_whitespace else content
     except Exception as e:
         return str(e)
