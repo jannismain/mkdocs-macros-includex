@@ -33,25 +33,32 @@ def include_partial(
 
     Args:
         filepath: file to include
-        start: line number to begin include (is overwritten, if start_match matches a line)
-        end: line number to end include (is overwritten, if end_match matches a line)
-             Use negative numbers to index from end of file (e.g. -3 to skip last 3 lines of file)
-             Must be greater than start, otherwise no content will be returned.
+        start: line number to begin include (is overwritten, if start_match matches a line).
+        end: line number to end include (is overwritten, if end_match matches a line).
+
+            Use negative numbers to index from end of file (e.g. -3 to skip last 3 lines of file).
+            Must be greater than start, otherwise no content will be returned.
+
         lines: number of lines to return (takes precedence over end and end_match)
-        dedent: dedent by indentation of first line to be returned (default: True)
-                alternatively, provide an integer value to dedent by that amount
+        dedent (bool): dedent by indentation of first line to be returned
+        dedent (int): dedent by that many characters
         indent: add this many *indent_char*s to beginning of each line
         indent_char: single character to use for indentation (default: " " → *space*)
         start_match: find start by providing text that shall match the first line
-        end_match: find end by providing text that shall match the last line
-                   cannot be used together with *lines*
+        end_match: find end by providing text that shall match the last line.
+
+            !!! warning
+                Cannot be used together with *lines*
+
         start_offset: number of lines to offset line found by *start_match*
-                      provide positive integer to exclude that many lines after matched line
-                      provide negative integer to include additional lines before matched line
+            provide positive integer to exclude that many lines after matched line
+            provide negative integer to include additional lines before matched line
         end_offset: number of lines to offset line found by *end_match*
-                    provide positive integer to include additional lines after matched line
-                    provide negative integer to exclude lines before matched line
-                    e.g. end_offset=1 will include the matched line in the output (default)
+
+            - provide positive integer to include additional lines after matched line
+            - provide negative integer to exclude lines before matched line
+
+            e.g. end_offset=1 will include the matched line in the output (default)
 
     Returns:
         content of file at *filepath*, restricted by remaining arguments
