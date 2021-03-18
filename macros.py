@@ -24,6 +24,7 @@ def include_partial(
     end_match: str = "",
     start_offset: int = 0,
     end_offset: int = 1,
+    silence_errors: bool = False,
 ) -> str:
     """Include parts of a file.
 
@@ -60,6 +61,8 @@ def include_partial(
 
             e.g. end_offset=1 will include the matched line in the output (default)
 
+        silence_errors: if true, do not return exception messages
+
     Returns:
         content of file at *filepath*, restricted by remaining arguments
 
@@ -90,4 +93,8 @@ def include_partial(
         content = "".join([indent_char * indent + line[dedent:] for line in content])
         return content.rstrip() if not keep_trailing_whitespace else content
     except Exception as e:
-        return str(e)
+        return (
+            f'<span class="error" style="color:red">{e}</span>'
+            if not silence_errors
+            else ""
+        )
