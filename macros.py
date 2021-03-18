@@ -66,6 +66,9 @@ def include_partial(
     Returns:
         content of file at *filepath*, restricted by remaining arguments
 
+    !!! seealso "Examples"
+        Have a look at [test_macros][] for some examples on how to use [macros.include_partial][]
+
     """
     try:
         content = pathlib.Path(filepath).open("r").readlines()
