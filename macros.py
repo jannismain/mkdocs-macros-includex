@@ -19,11 +19,13 @@ def include_partial(
     dedent=True,
     indent: int = 0,
     indent_char: str = " ",
+    indent_first: bool = False,
     keep_trailing_whitespace: bool = False,
     start_match: str = "",
     end_match: str = "",
     start_offset: int = 0,
-    end_offset: int = 1,
+    end_offset: int = 0,
+    include_last: bool = False,
     silence_errors: bool = False,
 ) -> str:
     """Include parts of a file.
@@ -45,6 +47,13 @@ def include_partial(
         dedent (int): dedent by that many characters
         indent: add this many *indent_char*s to beginning of each line
         indent_char: single character to use for indentation (default: " " → *space*)
+        indent_first: whether to also indent the first line
+
+            `indent` might be used to make the content match the indentation of the document
+            where the content is included. As the `include_partial` statement will already be
+            indented, the first line doesn't need to be indented in most cases where an indent
+            would be used.
+
         start_match: find start by providing text that shall match the first line
         end_match: find end by providing text that shall match the last line.
 
@@ -59,8 +68,7 @@ def include_partial(
             - provide positive integer to include additional lines after matched line
             - provide negative integer to exclude lines before matched line
 
-            e.g. end_offset=1 will include the matched line in the output (default)
-
+        include_last: also include the last line (same as `end_offset=1`)
         silence_errors: if true, do not return exception messages
 
     Returns:
@@ -83,7 +91,7 @@ def include_partial(
                     else:
                         break
                 if first_line_found and end_match and end_match in line:
-                    end = i + end_offset
+                    end = i + end_offset + (1 if include_last else 0)
                     break
         if lines:
             end = start + lines
@@ -93,7 +101,13 @@ def include_partial(
         if dedent == True and content:
             dedent = len(content[0]) - len(content[0].lstrip())
 
-        content = "".join([indent_char * indent + line[dedent:] for line in content])
+        content = "".join(
+            [
+                ((indent_char * indent) if i > 0 or indent_first else "")
+                + line[dedent:]
+                for i, line in enumerate(content)
+            ]
+        )
         return content.rstrip() if not keep_trailing_whitespace else content
     except Exception as e:
         return (
