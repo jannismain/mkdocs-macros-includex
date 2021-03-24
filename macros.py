@@ -27,6 +27,9 @@ def include_partial(
     end_offset: int = 0,
     include_last: bool = False,
     silence_errors: bool = False,
+    raw: bool = False,
+    escape=[],
+    replace=[],
 ) -> str:
     """Include parts of a file.
 
@@ -70,6 +73,12 @@ def include_partial(
 
         include_last: also include the last line (same as `end_offset=1`)
         silence_errors: if true, do not return exception messages
+        raw: will wrap file content in {% raw %} block.
+
+            this prevents further interpretation of the file content by jinja.
+
+        escape (List[str]): characters in list will be escaped using `\`
+        replace (List[Tuple(str, str)]): replace arbitrary substrings
 
     Returns:
         content of file at *filepath*, restricted by remaining arguments
@@ -79,7 +88,8 @@ def include_partial(
 
     """
     try:
-        content = pathlib.Path(filepath).open("r").readlines()
+        filepath = pathlib.Path(filepath)
+        content = filepath.open("r").readlines()
         if start_match or end_match:
             first_line_found = not start_match
             for i, line in enumerate(content):
@@ -101,6 +111,16 @@ def include_partial(
         if dedent == True and content:
             dedent = len(content[0]) - len(content[0].lstrip())
 
+        if not keep_trailing_whitespace:
+            content[-1] = content[-1].rstrip()
+
+        if raw:
+            content.insert(0, "{% raw %}\n")
+            if keep_trailing_whitespace:
+                content.append("{% endraw %}\n")
+            else:
+                content.append("\n{% endraw %}")
+
         content = "".join(
             [
                 ((indent_char * indent) if i > 0 or indent_first else "")
@@ -108,7 +128,15 @@ def include_partial(
                 for i, line in enumerate(content)
             ]
         )
-        return content.rstrip() if not keep_trailing_whitespace else content
+
+        for esc in escape:
+            content = content.replace(esc, "\\" + esc)
+
+        for orig, repl in replace:
+            content = content.replace(orig, repl)
+
+        return content
+
     except Exception as e:
         return (
             f'<span class="error" style="color:red">{e}</span>'
