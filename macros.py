@@ -30,6 +30,7 @@ def include_partial(
     raw: bool = False,
     escape=[],
     replace=[],
+    add_heading_levels: int = 0,
 ) -> str:
     """Include parts of a file.
 
@@ -79,6 +80,9 @@ def include_partial(
 
         escape (List[str]): characters in list will be escaped using `\`
         replace (List[Tuple(str, str)]): replace arbitrary substrings
+        add_heading_levels: If > 0, append as many "#" to any line starting with "#"
+
+            this is meant to be used with Markdown files, that need to fit into an existing header structure
 
     Returns:
         content of file at *filepath*, restricted by remaining arguments
