@@ -109,7 +109,13 @@ def include_partial(
         content = content[start:end]
 
         if dedent == True and content:
-            dedent = len(content[0]) - len(content[0].lstrip())
+            dedent = len(content[0].rstrip()) - len(content[0].strip())
+
+        if add_heading_levels:
+            content = [
+                add_heading_levels * "#" + c if c.startswith("#") else c
+                for c in content
+            ]
 
         if not keep_trailing_whitespace:
             content[-1] = content[-1].rstrip()
