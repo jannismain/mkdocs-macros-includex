@@ -32,7 +32,7 @@ def include_partial(
     replace=[],
     add_heading_levels: int = 0,
 ) -> str:
-    """Include parts of a file.
+    r"""Include parts of a file.
 
     Note:
         Whitespace (spaces, empty lines) will be stripped from the end of file.
