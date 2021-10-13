@@ -4,9 +4,10 @@ See the [`mkdocs-macros-plugin` Documentation](https://mkdocs-macros-plugin.read
 
 """
 import pathlib
+from typing import List, Tuple
 
 
-def define_env(env: MacrosPlugin):
+def define_env(env):
     """Define variables, macros and filters for mkdocs-macros."""
     env.macro(include_partial)
 
@@ -28,10 +29,11 @@ def include_partial(
     include_last: bool = False,
     silence_errors: bool = False,
     raw: bool = False,
-    escape=[],
-    replace=[],
+    escape: List[str] = None,
+    replace: List[Tuple[str]] = None,
     add_heading_levels: int = 0,
     lang: str = None,
+    escape_notice: bool = None,
 ) -> str:
     r"""Include parts of a file.
 
@@ -79,8 +81,8 @@ def include_partial(
 
             this prevents further interpretation of the file content by jinja.
 
-        escape (List[str]): characters in list will be escaped using `\`
-        replace (List[Tuple(str, str)]): replace arbitrary substrings
+        escape (Tuple[str]): characters in list will be escaped using `\`
+        replace (Tuple[Tuple(str, str)]): replace arbitrary substrings
         add_heading_levels: If > 0, append as many "#" to any line starting with "#"
 
             this is meant to be used with Markdown files, that need to fit into an existing header structure
@@ -90,6 +92,8 @@ def include_partial(
             this was added to support escaping an included file (using `raw`) but not have
             the raw-tags part of the code block.
 
+        escape_notice: include note about escaped characters at the end
+
     Returns:
         content of file at *filepath*, restricted by remaining arguments
 
@@ -97,6 +101,10 @@ def include_partial(
         Have a look at [test_macros][] for some examples on how to use [macros.include_partial][]
 
     """
+    # use empty list as default argument safely
+    escape = [] if escape is None else escape
+    replace = [] if replace is None else replace
+
     try:
         filepath = pathlib.Path(filepath)
         content = filepath.open("r").readlines()
@@ -141,10 +149,14 @@ def include_partial(
             if not content[-1].endswith("\n"):
                 content[-1] += "\n"
             content.append("{% endraw %}")
-            if keep_trailing_whitespace:
-                content.append("{% endraw %}\n")
-            else:
-                content.append("\n{% endraw %}")
+
+        if escape_notice and escape:
+            if not content[-1].endswith("\n"):
+                content[-1] += "\n"
+            content.append(
+                "*In the above text, the following characters have been escaped to ensure the integrity of this page: "
+                + ", ".join(f"`{e}`" for e in escape)
+            )
 
         content = "".join(
             [
