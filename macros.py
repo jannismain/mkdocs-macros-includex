@@ -6,7 +6,7 @@ See the [`mkdocs-macros-plugin` Documentation](https://mkdocs-macros-plugin.read
 import pathlib
 
 
-def define_env(env):
+def define_env(env: MacrosPlugin):
     """Define variables, macros and filters for mkdocs-macros."""
     env.macro(include_partial)
 
@@ -31,6 +31,7 @@ def include_partial(
     escape=[],
     replace=[],
     add_heading_levels: int = 0,
+    lang: str = None,
 ) -> str:
     r"""Include parts of a file.
 
@@ -84,6 +85,11 @@ def include_partial(
 
             this is meant to be used with Markdown files, that need to fit into an existing header structure
 
+        lang: wrap included file in markdown code fences with this language
+
+            this was added to support escaping an included file (using `raw`) but not have
+            the raw-tags part of the code block.
+
     Returns:
         content of file at *filepath*, restricted by remaining arguments
 
@@ -124,8 +130,17 @@ def include_partial(
         if not keep_trailing_whitespace:
             content[-1] = content[-1].rstrip()
 
+        if lang is not None:
+            content.insert(0, f"```{lang}\n")
+            if not content[-1].endswith("\n"):
+                content[-1] += "\n"
+            content.append("```")
+
         if raw:
             content.insert(0, "{% raw %}\n")
+            if not content[-1].endswith("\n"):
+                content[-1] += "\n"
+            content.append("{% endraw %}")
             if keep_trailing_whitespace:
                 content.append("{% endraw %}\n")
             else:
