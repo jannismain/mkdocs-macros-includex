@@ -4,7 +4,7 @@ See the [`mkdocs-macros-plugin` Documentation](https://mkdocs-macros-plugin.read
 
 """
 import pathlib
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 
 def define_env(env):
@@ -33,7 +33,8 @@ def include_partial(
     replace: List[Tuple[str]] = None,
     add_heading_levels: int = 0,
     lang: str = None,
-    escape_notice: bool = None,
+    escape_notice: Union[bool, str] = True,
+    replace_notice: Union[bool, str] = False,
 ) -> str:
     r"""Include parts of a file.
 
@@ -93,6 +94,7 @@ def include_partial(
             the raw-tags part of the code block.
 
         escape_notice: include note about escaped characters at the end
+        replace_notice: include note about replaced strings at the end
 
     Returns:
         content of file at *filepath*, restricted by remaining arguments
@@ -104,6 +106,8 @@ def include_partial(
     # use empty list as default argument safely
     escape = [] if escape is None else escape
     replace = [] if replace is None else replace
+    prefix, suffix = 0, 0
+    has_escaped_characters, has_replaced_characters = False, False
 
     try:
         filepath = pathlib.Path(filepath)
@@ -126,6 +130,18 @@ def include_partial(
 
         content = content[start:end]
 
+        for esc in escape:
+            for i, line in enumerate(content):
+                if esc in line:
+                    content[i] = line.replace(esc, "\\" + esc)
+                    has_escaped_characters = True
+
+        for orig, repl in replace:
+            for idx, line in enumerate(content):
+                if orig in line:
+                    content[idx] = line.replace(orig, repl)
+                    has_replaced_characters = True
+
         if dedent == True and content:
             dedent = len(content[0].rstrip()) - len(content[0].strip())
 
@@ -143,20 +159,48 @@ def include_partial(
             if not content[-1].endswith("\n"):
                 content[-1] += "\n"
             content.append("```")
+            prefix += 1
+            suffix += 1
 
         if raw:
             content.insert(0, "{% raw %}\n")
             if not content[-1].endswith("\n"):
                 content[-1] += "\n"
             content.append("{% endraw %}")
+            prefix += 1
+            suffix += 1
 
-        if escape_notice and escape:
+        if escape_notice and has_escaped_characters:
             if not content[-1].endswith("\n"):
                 content[-1] += "\n"
             content.append(
-                "*In the above text, the following characters have been escaped to ensure the integrity of this page: "
-                + ", ".join(f"`{e}`" for e in escape)
+                "*"
+                + (
+                    "In the above text, the following characters have been escaped: "
+                    if escape_notice == True
+                    else escape_notice
+                )
+                + ", ".join(f"` {e} `" for e in escape)
+                + "*"
+                + "{.caption}"
             )
+            suffix += 1
+
+        if replace_notice and has_replaced_characters:
+            if not content[-1].endswith("\n"):
+                content[-1] += "\n"
+            content.append(
+                "*"
+                + (
+                    "In the above text, the following substrings have been replaced: "
+                    if replace_notice == True
+                    else replace_notice
+                )
+                + ", ".join(f"{orig} with {repl}" for orig, repl in replace)
+                + "*"
+                + "{.caption}"
+            )
+            suffix += 1
 
         content = "".join(
             [
@@ -165,12 +209,6 @@ def include_partial(
                 for i, line in enumerate(content)
             ]
         )
-
-        for esc in escape:
-            content = content.replace(esc, "\\" + esc)
-
-        for orig, repl in replace:
-            content = content.replace(orig, repl)
 
         return content
 
