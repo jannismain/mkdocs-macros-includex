@@ -196,7 +196,7 @@ def include_partial(
                     if replace_notice == True
                     else replace_notice
                 )
-                + ", ".join(f"{orig} with {repl}" for orig, repl in replace)
+                + ", ".join(f"{orig} --> {repl}" for orig, repl in replace)
                 + "*"
                 + "{.caption}"
             )
