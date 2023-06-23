@@ -1,4 +1,4 @@
-# `includex` pluglet for mkdocs-macros
+# `includex`
 
 This is a **pluglet** for mkdocs-macros.
 It allows to include arbitrary files in mkdocs (similar to [snippets][] or [jinja include][]) with added convenience.
@@ -18,5 +18,5 @@ In the config (`mkdocs.yml`) file:
 plugins:
   - search
   - macros:
-      modules: ['mkdocs_includex`]
+      modules: ['mkdocs_includex']
 ```
