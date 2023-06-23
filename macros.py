@@ -9,10 +9,10 @@ from typing import List, Tuple, Union
 
 def define_env(env):
     """Define variables, macros and filters for mkdocs-macros."""
-    env.macro(include_partial)
+    env.macro(includex)
 
 
-def include_partial(
+def includex(
     filepath: pathlib.Path,
     start: int = 0,
     end: int = None,
