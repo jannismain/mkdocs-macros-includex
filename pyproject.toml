@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mkdocs-macros-includex"
+dynamic = ["version"]
+description = "Provides the `includex` macro for more flexible includes."
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "Jannis Mainczyk", email = "jmainczyk@gmail.com" }]
+requires-python = ">=3.10"
+
+[tool.hatch.version]
+path = "includex.py"
+
+[tool.hatch.envs.default]
+dependencies = ["coverage[toml]", "black", "isort", "pytest", "pytest-cov"]
+scripts = { "test" = "hatch run test:test" }
+
+[tool.hatch.envs.test]
+dependencies = ["pytest", "pytest-cov"]
+scripts = { "test" = "pytest --cov-config=pyproject.toml --cov-report=term-missing --cov-report html:build/coverage --cov=includex --cov=test_includex" }
+
+[tool.coverage.report]
+omit = ["**/setup.py", "**/__init__.py", "**/__main__.py"]
+exclude_lines = ["if __name__ == .__main__."]
+
+
+[[tool.hatch.envs.test.matrix]]
+python = ["3.10", "3.11"]
+
+[tool.hatch.envs.example]
+dependencies = [
+    "mkdocs-material",
+    "mkdocs-macros-plugin",
+    "mkdocstrings[python]",
+]
+[tool.hatch.envs.example.scripts]
+serve = "mkdocs serve -w includex.py"

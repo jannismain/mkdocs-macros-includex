@@ -1,0 +1,42 @@
+site_name: includex
+site_url: http://jannismain.github.io/mkdocs-macros-includex
+edit_uri: -/edit/main/doc/
+site_author: Jannis Mainczyk
+copyright: © Jannis Mainczyk
+repo_url: https://github.com/jannismain/mkdocs-macros-includex
+repo_name: mkdocs-macros-includex
+
+theme:
+  name: material
+  features:
+    - content.code.copy
+    - navigation.instant
+    - navigation.tracking
+    - toc.follow
+    - navigation.top
+
+plugins:
+  - search
+  - macros:
+      modules: [includex]
+  - mkdocstrings:
+      handlers:
+        python:
+          import:
+            - https://docs.python.org/3/objects.inv
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - attr_list
+  - md_in_html
+
+extra_css:
+  - custom.css

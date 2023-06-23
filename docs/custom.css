@@ -1,0 +1,4 @@
+/* wrap commands instead of scrolling horizontally */
+.show_and_tell_command > pre > code {
+    white-space: normal !important;
+}
