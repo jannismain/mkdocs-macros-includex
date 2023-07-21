@@ -92,11 +92,3 @@ If errors are raised, the default error handling is triggered, which means the w
 ```py
 includex('foo.txt', raise_errors=True)
 ```
-
-## Reference
-
-### ::: includex
-    options:
-        show_root_heading: false
-        show_root_toc_entry: false
-        docstring_section_style: list
