@@ -135,7 +135,7 @@ def test_escape_no_notice(testfile):
 @pytest.mark.parametrize("replace_notice", [True, False], ids=["notice", "no_notice"])
 @pytest.mark.parametrize("replace", [[("!!!", "???")]])
 def test_replace(testfile, replace, replace_notice):
-    args = {"replace": replace}
+    args = {"replace": replace, "replace_notice": replace_notice}
     expected = content
     for orig, repl in replace:
         expected = expected.replace(orig, repl)
