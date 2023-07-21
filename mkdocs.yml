@@ -1,6 +1,7 @@
 site_name: includex
 site_url: http://jannismain.github.io/mkdocs-macros-includex
 edit_uri: -/edit/main/doc/
+site_dir: build/docs
 site_author: Jannis Mainczyk
 copyright: © Jannis Mainczyk
 repo_url: https://github.com/jannismain/mkdocs-macros-includex

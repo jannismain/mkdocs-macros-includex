@@ -30,11 +30,12 @@ exclude_lines = ["if __name__ == .__main__."]
 [[tool.hatch.envs.test.matrix]]
 python = ["3.10", "3.11"]
 
-[tool.hatch.envs.example]
+[tool.hatch.envs.docs]
 dependencies = [
     "mkdocs-material",
     "mkdocs-macros-plugin",
     "mkdocstrings[python]",
 ]
-[tool.hatch.envs.example.scripts]
-serve = "mkdocs serve -w includex.py"
+[tool.hatch.envs.docs.scripts]
+serve = "mkdocs serve --watch includex.py --dev-addr localhost:54321"
+build = "mkdocs build"
