@@ -1,7 +1,3 @@
----
-hide_toc: true
----
-
 # Reference
 
 ## ::: includex
