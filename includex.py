@@ -175,6 +175,13 @@ def includex(
             prefix += 1
             suffix += 1
 
+        if raw:
+            if not content[-1].endswith("\n"):
+                content[-1] += "\n"
+            content = ["{% raw %}\n", *content, "{% endraw %}"]
+            prefix += 1
+            suffix += 1
+
         content = "".join(
             [
                 ((indent_char * indent) if i > 0 or indent_first else "")
@@ -182,11 +189,6 @@ def includex(
                 for i, line in enumerate(content)
             ]
         )
-
-        if raw:
-            content = "{% raw %}\n" + content + "\n{% endraw %}"
-            prefix += 1
-            suffix += 1
 
         if escape_notice and has_escaped_characters:
             if not content.endswith("\n"):
