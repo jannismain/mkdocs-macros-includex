@@ -20,6 +20,7 @@ plugins:
   - search
   - macros:
       modules: [includex]
+      include_dir: .
   - mkdocstrings:
       handlers:
         python:
