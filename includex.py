@@ -93,7 +93,8 @@ def includex(
         replace: replace arbitrary substrings
         add_heading_levels: If > 0, append as many "#" to any line starting with "#"
 
-            this is meant to be used with Markdown files, that need to fit into an existing header structure
+            this is meant to be used with Markdown files, that need to fit into an existing header
+            structure
 
         lang: wrap included file in markdown code fences with this language
 

@@ -6,10 +6,10 @@ import tempfile
 import pytest
 
 from includex import (
-    includex,
-    ESCAPE_NOTICE_TEMPLATE,
     ERROR_NOTICE_TEMPLATE,
+    ESCAPE_NOTICE_TEMPLATE,
     REPLACE_NOTICE_TEMPLATE,
+    includex,
 )
 
 content = """# Header
