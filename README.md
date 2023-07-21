@@ -18,5 +18,5 @@ In the config (`mkdocs.yml`) file:
 plugins:
   - search
   - macros:
-      modules: ['mkdocs_includex']
+      modules: ['includex']
 ```
