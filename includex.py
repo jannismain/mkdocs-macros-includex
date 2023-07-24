@@ -1,6 +1,6 @@
 import pathlib
 
-__version__ = "0.0.1"
+__version__ = "0.1.0.dev0"
 
 
 def define_env(env):
@@ -41,6 +41,7 @@ def includex(
     lang: str = None,
     escape_notice: bool | str = True,
     replace_notice: bool | str = False,
+    alt_code_fences: bool | str = False,
 ) -> str:
     r"""Include parts of a file.
 
@@ -103,6 +104,11 @@ def includex(
 
         escape_notice: include note about escaped characters at the end
         replace_notice: include note about replaced strings at the end
+        alt_code_fences: when `True`, `'''` is used for code fences so they are not rendered
+            in Markdown documents.
+
+            When a custom string is provided, it will be used as code fence marker instead.
+
 
     Returns:
         content of file at *filepath*, modified by remaining arguments
@@ -165,10 +171,15 @@ def includex(
             content[-1] = content[-1].rstrip()
 
         if lang is not None:
-            content.insert(0, f"```{lang}\n")
+            code_fence_marker = (
+                "```"
+                if alt_code_fences is False
+                else ("'''" if alt_code_fences is True else alt_code_fences)
+            )
+            content.insert(0, f"{code_fence_marker}{lang}\n")
             if not content[-1].endswith("\n"):
                 content[-1] += "\n"
-            content.append("```")
+            content.append(f"{code_fence_marker}")
             prefix_offset += 1
             suffix_offset += 1
 
@@ -217,12 +228,25 @@ def includex(
         )
 
 
-def show_and_tell(command, lang="py", output_lang="yaml", render_result=False):
-    result = eval(command, dict(includex=includex))
+
+
+def show_and_tell(command, lang="py", output_lang="txt", render_result=False, alt_code_fences=True):
+    original_command = command
+    if alt_code_fences:
+        command = command[:-1] + f""", alt_code_fences={alt_code_fences})"""
+    result = eval(
+        command,
+        dict(
+            includex=includex,
+        ),
+    )
     rv = (
-        f"```{{ .{lang} .show_and_tell_command }}\n{command}\n```\n"
+        f"```{{ .{lang} .show_and_tell_command }}\n{original_command}\n```\n"
         f'\n```{{ .{output_lang} .show_and_tell_result title="Result" }}\n{result}\n```'
     )
     if render_result:
+        # if the result shall be rendered, we need proper code fences
+        if alt_code_fences:
+            result = eval(original_command, dict(includex=includex))
         rv += f"\n\n---\n\n{result}\n\n---\n"
     return rv

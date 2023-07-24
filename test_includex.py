@@ -187,6 +187,27 @@ def test_dedent(testfile, dedent):
     assert returned == expected
 
 
+
+
+@pytest.mark.parametrize("alt_code_fences", [False, True, "..."])
+def test_alt_code_fences(testfile, alt_code_fences):
+    args = dict(start_match="print", lines=1, lang="py", alt_code_fences=alt_code_fences)
+
+    expected = 'print("Hello, World!")'
+    if alt_code_fences is True:
+        code_fence_marker = "'''"
+    elif alt_code_fences is False:
+        code_fence_marker = "```"
+    else:
+        code_fence_marker = alt_code_fences
+    expected = "\n".join([f"{code_fence_marker}py", expected, code_fence_marker])
+
+    returned = includex(testfile, **args)
+
+    print_debug(expected, returned)
+    assert returned == expected
+
+
 @pytest.mark.parametrize("indent_first", [True, False])
 def test_indent_raw(testfile, indent_first):
     args = dict(indent=4, raw=True, indent_first=indent_first)
