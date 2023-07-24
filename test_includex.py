@@ -97,9 +97,7 @@ def test_include_block_by_line_number(testfile, start, end):
 def test_include_block_by_matching_start_and_end(testfile):
     """Include block from file by matching start and end lines."""
     expected = "\n".join(content.split("\n")[8:11]).rstrip()
-    returned = includex(
-        testfile, start_match="```py", end_match="```", include_end_match=True
-    )
+    returned = includex(testfile, start_match="```py", end_match="```", include_end_match=True)
     print_debug(expected, returned)
     assert returned == expected
 
@@ -193,9 +191,7 @@ def test_dedent(testfile, dedent):
 def test_indent_raw(testfile, indent_first):
     args = dict(indent=4, raw=True, indent_first=indent_first)
     expected = ((args["indent"] * " ") if indent_first else "") + "{% raw %}\n"
-    expected += "\n".join(
-        [args["indent"] * " " + line for line in content.split("\n")[:-1]]
-    )
+    expected += "\n".join([args["indent"] * " " + line for line in content.split("\n")[:-1]])
     expected += "\n" + (args["indent"] * " ") + "{% endraw %}"
     returned = includex(testfile, **args)
     print_debug(expected, returned)

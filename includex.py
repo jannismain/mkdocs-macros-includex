@@ -159,10 +159,7 @@ def includex(
             dedent = len(content[0].rstrip()) - len(content[0].strip())
 
         if add_heading_levels:
-            content = [
-                add_heading_levels * "#" + c if c.startswith("#") else c
-                for c in content
-            ]
+            content = [add_heading_levels * "#" + c if c.startswith("#") else c for c in content]
 
         if not keep_trailing_whitespace:
             content[-1] = content[-1].rstrip()
@@ -193,17 +190,16 @@ def includex(
         if escape_notice and has_escaped_characters:
             if not content.endswith("\n"):
                 content += "\n"
-            content += (
-                ESCAPE_NOTICE_TEMPLATE if escape_notice is True else escape_notice
-            ) % (", ".join(f"` {e} `" for e in escape))
+            content += (ESCAPE_NOTICE_TEMPLATE if escape_notice is True else escape_notice) % (
+                ", ".join(f"` {e} `" for e in escape)
+            )
             suffix_offset += 1
 
         if replace_notice and has_replaced_characters:
             if not content.endswith("\n"):
                 content += "\n"
             content += (
-                REPLACE_NOTICE_TEMPLATE
-                % ", ".join(f"{orig} --> {repl}" for orig, repl in replace)
+                REPLACE_NOTICE_TEMPLATE % ", ".join(f"{orig} --> {repl}" for orig, repl in replace)
                 if replace_notice is True
                 else replace_notice
             )
@@ -217,8 +213,7 @@ def includex(
         return (
             ""
             if silence_errors
-            else ERROR_NOTICE_TEMPLATE
-            % (f"{e.__class__.__name__}" + (f": {e}" if f"{e}" else ""))
+            else ERROR_NOTICE_TEMPLATE % (f"{e.__class__.__name__}" + (f": {e}" if f"{e}" else ""))
         )
 
 
