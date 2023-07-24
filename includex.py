@@ -118,7 +118,7 @@ def includex(
     # use empty list as default argument safely
     escape = [] if escape is None else escape
     replace = [] if replace is None else replace
-    prefix, suffix = 0, 0
+    prefix_offset, suffix_offset = 0, 0
     has_escaped_characters, has_replaced_characters = False, False
 
     try:
@@ -172,15 +172,15 @@ def includex(
             if not content[-1].endswith("\n"):
                 content[-1] += "\n"
             content.append("```")
-            prefix += 1
-            suffix += 1
+            prefix_offset += 1
+            suffix_offset += 1
 
         if raw:
             if not content[-1].endswith("\n"):
                 content[-1] += "\n"
             content = ["{% raw %}\n", *content, "{% endraw %}"]
-            prefix += 1
-            suffix += 1
+            prefix_offset += 1
+            suffix_offset += 1
 
         content = "".join(
             [
@@ -196,7 +196,7 @@ def includex(
             content += (
                 ESCAPE_NOTICE_TEMPLATE if escape_notice is True else escape_notice
             ) % (", ".join(f"` {e} `" for e in escape))
-            suffix += 1
+            suffix_offset += 1
 
         if replace_notice and has_replaced_characters:
             if not content.endswith("\n"):
@@ -207,7 +207,7 @@ def includex(
                 if replace_notice is True
                 else replace_notice
             )
-            suffix += 1
+            suffix_offset += 1
 
         return content
 
