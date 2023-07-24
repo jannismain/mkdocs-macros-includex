@@ -15,6 +15,7 @@ ESCAPE_NOTICE_TEMPLATE = (
     "*In the above text, the following characters have been escaped: %s*{.caption}"
 )
 ERROR_NOTICE_TEMPLATE = '<span class="error" style="color:red">%s</span>'
+CAPTION_TEMPLATE = "*%(filepath)s%(line)s*{.caption}"
 
 
 def includex(
@@ -41,6 +42,7 @@ def includex(
     lang: str = None,
     escape_notice: bool | str = True,
     replace_notice: bool | str = False,
+    caption: bool | str = None,
     alt_code_fences: bool | str = False,
 ) -> str:
     r"""Include parts of a file.
@@ -104,6 +106,10 @@ def includex(
 
         escape_notice: include note about escaped characters at the end
         replace_notice: include note about replaced strings at the end
+        caption: include caption for code block
+
+            `lang` must be given for this option to have any effect
+
         alt_code_fences: when `True`, `'''` is used for code fences so they are not rendered
             in Markdown documents.
 
@@ -216,6 +222,14 @@ def includex(
             )
             suffix_offset += 1
 
+        if caption and lang is not None:
+            if not content.endswith("\n"):
+                content += "\n"
+            start_lineno = start + start_offset + 1
+            end_lineno = end + end_offset + 1
+            content += _render_caption(caption, filepath, start_lineno, end_lineno)
+            suffix_offset += 1
+
         return content
 
     except Exception as e:
@@ -228,6 +242,16 @@ def includex(
         )
 
 
+def _render_caption(caption, filepath: pathlib.Path, start=0, end=0):
+    return (CAPTION_TEMPLATE if caption is True else caption) % dict(
+        filepath=filepath,
+        filename=filepath.name,
+        line=(
+            f", line{'s' if end>start else ''} {start}{f'-{end}' if end>start else ''}"
+            if start
+            else ""
+        ),
+    )
 
 
 def show_and_tell(command, lang="py", output_lang="txt", render_result=False, alt_code_fences=True):

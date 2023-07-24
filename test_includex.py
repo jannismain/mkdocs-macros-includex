@@ -6,9 +6,11 @@ import tempfile
 import pytest
 
 from includex import (
+    CAPTION_TEMPLATE,
     ERROR_NOTICE_TEMPLATE,
     ESCAPE_NOTICE_TEMPLATE,
     REPLACE_NOTICE_TEMPLATE,
+    _render_caption,
     includex,
 )
 
@@ -187,6 +189,39 @@ def test_dedent(testfile, dedent):
     assert returned == expected
 
 
+
+
+def test_render_caption():
+    args = dict(filepath=pathlib.Path("foo/bar.txt"))
+    assert _render_caption("%(filepath)s", **args) == "foo/bar.txt"
+    assert _render_caption("%(filename)s", **args) == "bar.txt"
+    assert _render_caption("%(filepath)s%(line)s", **args, start=1, end=1) == "foo/bar.txt, line 1"
+    assert (
+        _render_caption("%(filepath)s%(line)s", **args, start=1, end=3) == "foo/bar.txt, lines 1-3"
+    )
+
+
+@pytest.mark.parametrize(
+    "caption", [False, True, "Included from testfile", "Excerpt from $(filename)s"]
+)
+def test_caption(testfile, caption):
+    args = dict(start_match="print", lines=1, lang="py", caption=caption)
+
+    expected = """```py\nprint("Hello, World!")\n```"""
+    if caption:
+        expected_caption = CAPTION_TEMPLATE if caption is True else caption
+        expected_caption = _render_caption(
+            expected_caption,
+            filepath=pathlib.Path(testfile),
+            start=10,
+            end=11,
+        )
+        expected = expected + "\n" + expected_caption
+
+    returned = includex(testfile, **args)
+
+    print_debug(expected, returned)
+    assert returned == expected
 
 
 @pytest.mark.parametrize("alt_code_fences", [False, True, "..."])

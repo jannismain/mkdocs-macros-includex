@@ -63,6 +63,21 @@ For replaced chraracters, a replace notice can be added:
 
 {{ show_and_tell("includex('mkdocs.yml', start_match='features:', end_match='plugins:', start_offset=1, replace=[('-', '~')], replace_notice=True)") }}
 
+### Wrap in code block
+
+{{ show_and_tell("includex('mkdocs.yml', lines=3, lang='yaml')", render_result=True) }}
+
+
+{{ show_and_tell("includex('mkdocs.yml', lines=3, lang='yaml', caption=True)", render_result=True) }}
+
+When you include content from a file that doesn't include the first line, the range is included in the caption by default:
+
+{{ show_and_tell("includex('mkdocs.yml', start_match='mkdocstrings:', end_match='objects.inv', lang='yaml', caption=True)", render_result=True) }}
+
+{{ show_and_tell("includex('mkdocs.yml', lines=3, lang='yaml', caption='Excerpt from %(filepath)s')", render_result=True) }}
+
+{{ show_and_tell("includex('mkdocs.yml', lines=3, lang='yaml', caption='Excerpt from MkDocs configuration file')", render_result=True) }}
+
 ### Wrap in `raw` tags
 
 You can wrap included content in `{\% raw \%}` tags to prevent any further macro syntax from being executed:
