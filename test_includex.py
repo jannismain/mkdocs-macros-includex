@@ -31,6 +31,17 @@ print("Hello, World!")
 
 * [Python](python.org)
 
+## List
+
+- first level
+  - second level
+    - third level
+      - fourth level
+        - fifth level
+
+          some content
+          on the fifth level
+
 Second last line
 Last line
 """
@@ -158,21 +169,15 @@ def test_first_character_missing_issue(testfile):
     assert returned == expected
 
 
-@pytest.mark.parametrize("dedent", [True, False, 6, "foo"])
+@pytest.mark.parametrize("dedent", [True, False, 4, "foo"])
 def test_dedent(testfile, dedent):
-    args = dict(start_match="    ", lines=1, dedent=dedent)
-    if dedent == True:
-        expected = "".join(
-            [line.lstrip() for line in content.split("\n") if line.startswith("    ")]
-        )
-    elif dedent == False:
-        expected = "".join(
-            [line for line in content.split("\n") if line.startswith("    ")]
-        )
+    args = dict(start_match="- second level", lines=1, dedent=dedent)
+    if dedent is True:
+        expected = "- second level"
+    elif dedent is False:
+        expected = "  - second level"
     elif isinstance(dedent, int):
-        expected = "".join(
-            [line[dedent:] for line in content.split("\n") if line.startswith("    ")]
-        )
+        expected = "second level"
     else:
         args["raise_errors"] = True
         with pytest.raises(AssertionError):
