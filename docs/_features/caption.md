@@ -7,3 +7,24 @@ markdown_extensions:
   - attr_list
   - ...
 ```
+
+Then you can style these captions to look just like figcaptions. Here is an example for Material for MkDocs:
+
+<!-- TODO: When includex can be nested, use the command below instead of the copy-pasted css block -->
+<!-- {{ includex('docs/custom.css', start_match="center captions", end_match="}", start_offset=1) }} -->
+
+```css
+/* center captions */
+.md-typeset .caption,
+.md-typeset figcaption {
+    /* same as material's figcaption */
+    font-style: normal;
+    max-width: 24rem;
+    margin: 1em auto 1.5em;
+    text-align: center;
+    display: block;
+    font-size: 0.8rem;
+    /* custom */
+    line-height: 1.2;
+}
+```
