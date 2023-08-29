@@ -189,6 +189,20 @@ def test_dedent(testfile, dedent):
     assert returned == expected
 
 
+def test_automatic_dedent(testfile):
+    args = dict(start_match="- third level", end_match="- fifth level")
+    expected = """- third level\n  - fourth level"""
+    returned = includex(testfile, **args)
+    print_debug(expected, returned)
+    assert returned == expected
+
+
+def test_automatic_dedent_code_block(testfile):
+    args = dict(start_match="- third level", end_match="- fifth level", lang="yaml")
+    expected = """```yaml\n- third level\n  - fourth level\n```"""
+    returned = includex(testfile, **args)
+    print_debug(expected, returned)
+    assert returned == expected
 
 
 def test_render_caption():
@@ -268,7 +282,7 @@ def test_raw_lang(testfile):
 
 @pytest.mark.parametrize("args", [dict(dedent="foo")])
 def test_exception_to_error_message(testfile, args):
-    args = dict(start=0, end=1, **args)
+    args = dict(start=0, end=1, raise_errors=False, **args)
     expected = ERROR_NOTICE_TEMPLATE % "AssertionError"
     returned = includex(testfile, **args)
     print_debug(expected, returned)

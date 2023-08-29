@@ -17,16 +17,23 @@ theme:
     - toc.integrate
     - navigation.top
 
+nav:
+  - index.md
+  - changelog.md
+  - reference.md
+
 plugins:
   - search
-  - macros:
-      modules: [includex]
+  - macros: # see https://mkdocs-macros-plugin.readthedocs.io/
       include_dir: .
+      module_name: docs/macros
+      modules: [includex]
   - mkdocstrings:
       handlers:
         python:
           import:
             - https://docs.python.org/3/objects.inv
+  - autorefs
 
 markdown_extensions:
   - admonition
@@ -40,6 +47,14 @@ markdown_extensions:
   - pymdownx.superfences
   - attr_list
   - md_in_html
+  - toc:
+      marker: ""
+      permalink: "#"
+      permalink_title: "Link to this section"
+      toc_depth: 3
+  - footnotes
+  - pymdownx.tabbed:
+      alternate_style: true
 
 extra_css:
   - custom.css

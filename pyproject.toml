@@ -16,7 +16,7 @@ path = "includex.py"
 
 [tool.hatch.envs.default]
 dependencies = ["coverage[toml]", "black", "pytest", "pytest-cov", "ruff"]
-scripts = { "test" = "hatch run test:test" }
+scripts = { "test" = "hatch run test:test", "docs" = "hatch run docs:serve" }
 
 [tool.hatch.envs.test]
 dependencies = ["pytest", "pytest-cov"]
@@ -35,6 +35,7 @@ dependencies = [
     "mkdocs-material",
     "mkdocs-macros-plugin",
     "mkdocstrings[python]",
+    "mkdocs-autorefs",
 ]
 [tool.hatch.envs.docs.scripts]
 serve = "mkdocs serve --watch includex.py --dev-addr localhost:54321"

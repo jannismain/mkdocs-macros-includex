@@ -1,6 +1,6 @@
 import pathlib
 
-__version__ = "0.1.0.dev0"
+__version__ = "0.0.2"
 
 
 def define_env(env):
@@ -34,7 +34,7 @@ def includex(
     end_offset: int = 0,
     include_end_match: bool = False,
     silence_errors: bool = False,
-    raise_errors: bool = False,
+    raise_errors: bool = True,
     raw: bool = False,
     escape: list[str] = None,
     replace: list[tuple[str]] = None,
@@ -44,6 +44,7 @@ def includex(
     replace_notice: bool | str = False,
     caption: bool | str = None,
     alt_code_fences: bool | str = False,
+    suffix: str = "",
 ) -> str:
     r"""Include parts of a file.
 
@@ -115,6 +116,7 @@ def includex(
 
             When a custom string is provided, it will be used as code fence marker instead.
 
+        suffix: add this after the included content
 
     Returns:
         content of file at *filepath*, modified by remaining arguments
@@ -122,11 +124,8 @@ def includex(
     # transform one-based indices into file to zero-based indices into arrays
     if start > 0:
         start -= 1
-    if end is not None:
-        end -= 1
-    # end should be inclusive
-    if end is not None:
-        end += 1
+    # end doesn't need to be adjusted here, as it is exclusive in Python but should be
+    # inclusive (+1) and also is a one-based index (-1)
     # use empty list as default argument safely
     escape = [] if escape is None else escape
     replace = [] if replace is None else replace
@@ -154,6 +153,14 @@ def includex(
 
         content = content[start:end]
 
+        if not content:
+            if raise_errors and not silence_errors:
+                raise ValueError("no content to include")
+            elif silence_errors:
+                return ""
+            else:
+                return ERROR_NOTICE_TEMPLATE % "no content to include"
+
         for esc in escape:
             for i, line in enumerate(content):
                 if esc in line:
@@ -176,6 +183,11 @@ def includex(
         if not keep_trailing_whitespace:
             content[-1] = content[-1].rstrip()
 
+        if suffix:
+            if not content[-1].endswith("\n"):
+                content[-1] += "\n"
+            content[-1] += f"{suffix}\n"
+
         if lang is not None:
             code_fence_marker = (
                 "```"
@@ -196,10 +208,11 @@ def includex(
             prefix_offset += 1
             suffix_offset += 1
 
+        # only dedent actual content, not prefix and suffix inserted by this macro
         content = "".join(
             [
                 ((indent_char * indent) if i > 0 or indent_first else "")
-                + line[dedent:]
+                + line[dedent if prefix_offset <= i < len(content) - suffix_offset else None :]
                 for i, line in enumerate(content)
             ]
         )
@@ -226,14 +239,14 @@ def includex(
             if not content.endswith("\n"):
                 content += "\n"
             start_lineno = start + start_offset + 1
-            end_lineno = end + end_offset + 1
+            end_lineno = (end + end_offset + 1) if end is not None else None
             content += _render_caption(caption, filepath, start_lineno, end_lineno)
             suffix_offset += 1
 
         return content
 
     except Exception as e:
-        if raise_errors:
+        if raise_errors and not silence_errors:
             raise e
         return (
             ""
@@ -247,7 +260,7 @@ def _render_caption(caption, filepath: pathlib.Path, start=0, end=0):
         filepath=filepath,
         filename=filepath.name,
         line=(
-            f", line{'s' if end>start else ''} {start}{f'-{end}' if end>start else ''}"
+            f", line{'s' if (end is None or end>start) else ''} {start}{'-' if end is None else ''}{f'-{end}' if (end is not None and end>start) else ''}"
             if start
             else ""
         ),
