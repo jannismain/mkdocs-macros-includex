@@ -3,7 +3,7 @@ import pathlib
 __version__ = "0.0.3"
 
 
-def define_env(env):
+def define_env(env):  # pragma: no cover
     env.macro(includex)
     env.macro(show_and_tell)
 
@@ -287,7 +287,9 @@ def _render_caption(caption, filepath: pathlib.Path, start=0, end=0):
     )
 
 
-def show_and_tell(command, lang="py", output_lang="txt", render_result=False, alt_code_fences=True):
+def show_and_tell(
+    command, lang="py", output_lang="txt", render_result=False, alt_code_fences=True
+):  # pragma: no cover
     original_command = command
     if alt_code_fences:
         command = command[:-1] + f""", alt_code_fences={alt_code_fences})"""

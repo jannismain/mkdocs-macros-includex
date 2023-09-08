@@ -27,7 +27,7 @@ scripts = { "test" = "pytest --cov-config=pyproject.toml --cov-report=term-missi
 
 [tool.coverage.report]
 omit = ["**/setup.py", "**/__init__.py", "**/__main__.py"]
-exclude_lines = ["if __name__ == .__main__."]
+exclude_lines = ["if __name__ == .__main__.", "pragma: no cover"]
 
 
 [[tool.hatch.envs.test.matrix]]
