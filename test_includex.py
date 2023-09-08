@@ -211,7 +211,8 @@ def test_render_caption():
     assert _render_caption("%(filename)s", **args) == "bar.txt"
     assert _render_caption("%(filepath)s%(line)s", **args, start=1, end=1) == "foo/bar.txt, line 1"
     assert (
-        _render_caption("%(filepath)s%(line)s", **args, start=1, end=3) == "foo/bar.txt, lines 1-3"
+        _render_caption("%(filepath)s%(line)s", **args, start=1, end=None)
+        == "foo/bar.txt, lines 1-"
     )
 
 
@@ -228,7 +229,7 @@ def test_caption(testfile, caption):
             expected_caption,
             filepath=pathlib.Path(testfile),
             start=10,
-            end=11,
+            end=10,
         )
         expected = expected + "\n" + expected_caption
 
@@ -236,6 +237,39 @@ def test_caption(testfile, caption):
 
     print_debug(expected, returned)
     assert returned == expected
+
+
+# The example content above has 32 lines in total (not including the empty line at the end)
+
+
+@pytest.mark.parametrize(
+    "args, expected",
+    [
+        (dict(start=3, lines=1), "line 3"),  # include only line 3
+        (dict(start=3, end=5), "lines 3-5"),  # include lines 3-5
+        (dict(start=3, lines=3), "lines 3-5"),  # include 3 lines starting with line 3
+        # negative indices
+        (dict(start=-3), "lines 30-"),  # include last 3 lines
+        (dict(start=-3, end=-1), "lines 30-31"),  # include last 3 lines, but omit the last one
+        # start/end match
+        (dict(start_match="print", lines=1), "line 10"),  # include first line that contains `print`
+        (
+            dict(start_match="```py", end_match="```", include_end_match=True),
+            "lines 9-11",
+        ),  # include code block
+        (dict(start_match="## Ref", end_match="## List"), "lines 16-19"),  # include reference block
+        (
+            dict(start_match="## Ref", start_offset=1, end_match="## List"),
+            "lines 17-19",
+        ),  # include reference block without the heading
+    ],
+)
+def test_caption_lines(testfile, args, expected):
+    args.update(dict(caption=True, lang="txt"))  # ensure caption is generated
+    returned = includex(testfile, **args)
+    print(returned)
+    returned_caption = returned.rstrip().split("\n")[-1]
+    assert expected in returned_caption
 
 
 @pytest.mark.parametrize("alt_code_fences", [False, True, "..."])

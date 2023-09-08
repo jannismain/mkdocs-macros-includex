@@ -123,9 +123,13 @@ def includex(
     """
     # transform one-based indices into file to zero-based indices into arrays
     if start > 0:
-        start -= 1
+        start_idx = start - 1
+    else:
+        start_idx = start
+
     # end doesn't need to be adjusted here, as it is exclusive in Python but should be
     # inclusive (+1) and also is a one-based index (-1)
+    end_idx = end
     # use empty list as default argument safely
     escape = [] if escape is None else escape
     replace = [] if replace is None else replace
@@ -135,11 +139,12 @@ def includex(
     try:
         filepath = pathlib.Path(filepath)
         content = filepath.open("r").readlines()
+        original_content = content.copy()
         if start_match or end_match:
             first_line_found = not start_match
             for i, line in enumerate(content):
                 if not first_line_found and start_match in line:
-                    start = i + start_offset
+                    start_idx = i + start_offset
                     first_line_found = True
                     if not lines and end_match:
                         continue
@@ -149,9 +154,9 @@ def includex(
                     end = i + end_offset + (1 if include_end_match else 0)
                     break
         if lines:
-            end = start + lines
+            end = start_idx + lines
 
-        content = content[start:end]
+        content = content[start_idx:end]
 
         if not content:
             if raise_errors and not silence_errors:
@@ -238,8 +243,16 @@ def includex(
         if caption and lang is not None:
             if not content.endswith("\n"):
                 content += "\n"
-            start_lineno = start + start_offset + 1
-            end_lineno = (end + end_offset + 1) if end is not None else None
+
+            # lines in file start with 1
+            start_lineno = start_idx + 1
+            end_lineno = end if end is not None else None
+            # indices might be negative
+            if start_lineno < 0:
+                start_lineno = len(original_content) + start_lineno
+            if end_lineno is not None and end_lineno < 0:
+                end_lineno = len(original_content) + end_lineno
+
             content += _render_caption(caption, filepath, start_lineno, end_lineno)
             suffix_offset += 1
 
@@ -256,11 +269,18 @@ def includex(
 
 
 def _render_caption(caption, filepath: pathlib.Path, start=0, end=0):
+    if end is None:  # open end inclusion
+        end_line_str = "-"
+    elif end > start:  # range inclusion
+        end_line_str = f"-{end}"
+    else:
+        end_line_str = ""
+
     return (CAPTION_TEMPLATE if caption is True else caption) % dict(
         filepath=filepath,
         filename=filepath.name,
         line=(
-            f", line{'s' if (end is None or end>start) else ''} {start}{'-' if end is None else ''}{f'-{end}' if (end is not None and end>start) else ''}"
+            f", line{'s' if (end is None or end>start) else ''} {start}{end_line_str}"
             if start
             else ""
         ),
