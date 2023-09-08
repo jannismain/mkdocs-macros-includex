@@ -323,6 +323,18 @@ def test_exception_to_error_message(testfile, args):
     assert returned == expected
 
 
+def test_readme_example():
+    # read example from readme and execute it
+    command = includex("README.md", start_match="{{ includex(", lines=1)
+    command = command.replace("{{", "").replace("}}", "").strip()
+    actual = eval(command).strip()
+
+    # read expected output from readme
+    expected = includex("README.md", start_match="```toml", end_match="```", include_end_match=True)
+
+    assert actual.startswith(expected), "caption is different but included content should match"
+
+
 if __name__ == "__main__":
     import sys
 
