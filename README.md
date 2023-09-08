@@ -1,18 +1,16 @@
 # `includex`
 
-This is a **pluglet** for mkdocs-macros.
-It allows to include arbitrary files in mkdocs (similar to [snippets][] or [jinja include][]) with added convenience.
-
-[snippets]: https://facelessuser.github.io/pymdown-extensions/extensions/snippets/
-[jinja include]: https://jinja.palletsprojects.com/en/3.1.x/templates/#include
+Use `includex` to **include** *anything* from any file into your markdown documentation.
 
 ## Installation
 
-`pip install mkdocs-macros-includex`
+```sh
+pip install mkdocs-macros mkdocs-macros-includex
+```
 
 ## Usage
 
-In the config (`mkdocs.yml`) file:
+`includex` can be configured as a **pluglet** for mkdocs-macros in the `mkdocs.yml` configuration file:
 
 ```yaml
 plugins:
@@ -20,6 +18,33 @@ plugins:
   - macros:
       modules: ['includex']
 ```
+
+Then you can use it to dynamically include file content in your documentation like this:
+
+```md
+### Versioning
+
+The version number is defined in the `pyproject.toml` file:
+
+{{ includex("pyproject.toml", start_match="[tool.hatch.version]", lang="toml", lines=2, caption=True) }}
+```
+
+Would be rendered as
+
+---
+
+### Versioning
+
+The version number is defined in the `pyproject.toml` file:
+
+```toml
+[tool.hatch.version]
+path = "includex.py"
+```
+<div style="text-align: center; font-style: italic;">pyproject.toml, lines 14-15</div>
+
+---
+
 <!-- TODO: Find out which markdown_extensions need to be enabled for which includex features and list them here -->
 
 ## Comparison to other tools
@@ -52,3 +77,4 @@ However, sections included using `includex` are not evaluated themselves, so `in
 [snippets]: https://facelessuser.github.io/pymdown-extensions/extensions/snippets/
 [^snippet-lines]: https://facelessuser.github.io/pymdown-extensions/extensions/snippets/#snippet-lines
 [^snippet-sections]: https://facelessuser.github.io/pymdown-extensions/extensions/snippets/#snippet-sections
+[jinja include]: https://jinja.palletsprojects.com/en/3.1.x/templates/#include
