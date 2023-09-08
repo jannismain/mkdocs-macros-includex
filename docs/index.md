@@ -73,9 +73,9 @@ For replaced chraracters, a replace notice can be added:
 
 #### Custom caption
 
-{{ show_and_tell("includex('mkdocs.yml', lines=3, lang='yaml', caption='Excerpt from MkDocs configuration file')", render_result=True) }}
+{{ show_and_tell("includex('mkdocs.yml', lines=3, lang='yaml', caption='*Excerpt from MkDocs configuration file*{.caption}')", render_result=True) }}
 
-{{ show_and_tell("includex('mkdocs.yml', lines=3, lang='yaml', caption='Excerpt from %(filepath)s')", render_result=True) }}
+{{ show_and_tell("includex('mkdocs.yml', lines=3, lang='yaml', caption='*Excerpt from %(filepath)s*{.caption}')", render_result=True) }}
 
 ### Wrap in `raw` tags
 
