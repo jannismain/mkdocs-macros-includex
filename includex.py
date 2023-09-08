@@ -1,6 +1,6 @@
 import pathlib
 
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 
 
 def define_env(env):

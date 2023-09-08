@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 [unreleased]: https://github.com/jannismain/mkdocs-macros-includex/compare/v0.0.2...HEAD
 
+### Fixed
+
+- **caption**: line numbers are no longer off
+
 ## [0.0.2] - 2023-08-29
 [0.0.2]: https://github.com/jannismain/mkdocs-macros-includex/releases/tag/v0.0.2
 
