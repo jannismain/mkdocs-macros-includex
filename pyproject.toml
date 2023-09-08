@@ -16,7 +16,10 @@ path = "includex.py"
 
 [tool.hatch.envs.default]
 dependencies = ["coverage[toml]", "black", "pytest", "pytest-cov", "ruff"]
-scripts = { "test" = "hatch run test:test", "docs" = "hatch run docs:serve" }
+[tool.hatch.envs.default.scripts]
+test = "hatch run test:test"
+docs = "hatch run docs:serve"
+release = "hatch run test:test && git tag -m 'bump version to '`hatch version` v`hatch version` --sign && git push --tags && hatch build && hatch publish"
 
 [tool.hatch.envs.test]
 dependencies = ["pytest", "pytest-cov"]
