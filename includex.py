@@ -158,7 +158,7 @@ def includex(
         if lines:
             end = start_idx + lines
 
-        content = content[start_idx:end]
+        content = content[start_idx:end_idx]
 
         if not content:
             if raise_errors and not silence_errors:
@@ -280,15 +280,23 @@ def _parse_filepath_short_syntax(
     filepath, suffix = filepath.split(sep, maxsplit=1)
     if sep not in suffix:
         start = suffix
-        return filepath, start, end
+        end = start # return single line if only start is given
     elif suffix.count(sep) == 1:
         start, end = suffix.split(sep)
-        return filepath, start, end
     else:
         token = ":SEP:"
-        suffix = suffix.replace(f"'{sep}", ":SEP:")
-    if len(suffix) == 1:
-    elif len(suffix) == 2:
+        suffix = suffix.replace(f"'{sep}'", token)
+        suffix = suffix.replace(f"'{sep}", token)
+        suffix = suffix.replace(f"{sep}'", token)
+        start, end = suffix.split(token, maxsplit=2)
+    
+    if start is not None and start.isnumeric():
+        start = int(start)
+    
+    if end is not None and end.isnumeric():
+        end = int(end)
+
+    return filepath, start, end
 
 
 def _render_caption(caption, filepath: pathlib.Path, start=0, end=0):

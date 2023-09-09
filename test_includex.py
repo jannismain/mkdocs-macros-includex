@@ -342,7 +342,7 @@ content_lines = content.split("\n")
     "suffix,expected",
     [
         ("1", content_lines[0]),
-        ("1:3", content_lines[0:3]),
+        ("1:3", "\n".join(content_lines[0:3])),
     ],
 )
 def test_short_syntax(testfile, suffix, expected):
