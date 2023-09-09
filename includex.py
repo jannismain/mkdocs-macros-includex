@@ -121,7 +121,16 @@ def includex(
     Returns:
         content of file at *filepath*, modified by remaining arguments
     """
-    filepath, start, end = _parse_filepath_short_syntax(filepath)
+    filepath, _start, _end = _parse_filepath_short_syntax(filepath)
+    if _start is not None:
+        if isinstance(_start, str):
+            start_match = _start
+        else:
+            start = _start
+        if isinstance(_end, str):
+            end_match = _end
+        else:
+            end = _end
 
     # transform one-based indices into file to zero-based indices into arrays
     if start > 0:
@@ -290,7 +299,7 @@ def _parse_filepath_short_syntax(
         suffix = suffix.replace(f"{sep}'", token)
         start, end = suffix.split(token, maxsplit=2)
     
-    if start is not None and start.isnumeric():
+    if start is not None start.isnumeric():
         start = int(start)
     
     if end is not None and end.isnumeric():
