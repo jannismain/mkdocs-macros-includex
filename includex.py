@@ -121,6 +121,8 @@ def includex(
     Returns:
         content of file at *filepath*, modified by remaining arguments
     """
+    filepath, start, end = _parse_filepath_short_syntax(filepath)
+
     # transform one-based indices into file to zero-based indices into arrays
     if start > 0:
         start_idx = start - 1
@@ -266,6 +268,27 @@ def includex(
             if silence_errors
             else ERROR_NOTICE_TEMPLATE % (f"{e.__class__.__name__}" + (f": {e}" if f"{e}" else ""))
         )
+
+
+def _parse_filepath_short_syntax(
+    filepath: str, sep: str = ":"
+) -> tuple[str, int | str | None, int | str | None]:
+    start = end = None
+    if sep not in filepath:
+        return filepath, start, end
+
+    filepath, suffix = filepath.split(sep, maxsplit=1)
+    if sep not in suffix:
+        start = suffix
+        return filepath, start, end
+    elif suffix.count(sep) == 1:
+        start, end = suffix.split(sep)
+        return filepath, start, end
+    else:
+        token = ":SEP:"
+        suffix = suffix.replace(f"'{sep}", ":SEP:")
+    if len(suffix) == 1:
+    elif len(suffix) == 2:
 
 
 def _render_caption(caption, filepath: pathlib.Path, start=0, end=0):

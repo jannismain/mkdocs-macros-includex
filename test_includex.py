@@ -335,6 +335,20 @@ def test_readme_example():
     assert actual.startswith(expected), "caption is different but included content should match"
 
 
+content_lines = content.split("\n")
+
+
+@pytest.mark.parametrize(
+    "suffix,expected",
+    [
+        ("1", content_lines[0]),
+        ("1:3", content_lines[0:3]),
+    ],
+)
+def test_short_syntax(testfile, suffix, expected):
+    assert includex(f"{testfile}:{suffix}") == expected
+
+
 if __name__ == "__main__":
     import sys
 
