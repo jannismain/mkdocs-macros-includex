@@ -151,12 +151,12 @@ def includex(
                     else:
                         break
                 if first_line_found and end_match and end_match in line:
-                    end = i + end_offset + (1 if include_end_match else 0)
+                    end_idx = i + end_offset + (1 if include_end_match else 0)
                     break
         if lines:
-            end = start_idx + lines
+            end_idx = start_idx + lines
 
-        content = content[start_idx:end]
+        content = content[start_idx:end_idx]
 
         if not content:
             if raise_errors and not silence_errors:
@@ -246,7 +246,7 @@ def includex(
 
             # lines in file start with 1
             start_lineno = start_idx + 1
-            end_lineno = end if end is not None else None
+            end_lineno = end_idx if end_idx is not None else None
             # indices might be negative
             if start_lineno < 0:
                 start_lineno = len(original_content) + start_lineno
