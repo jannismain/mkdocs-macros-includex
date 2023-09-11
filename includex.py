@@ -162,10 +162,10 @@ def includex(
                     else:
                         break
                 if first_line_found and end_match and end_match in line:
-                    end = i + end_offset + (1 if include_end_match else 0)
+                    end_idx = i + end_offset + (1 if include_end_match else 0)
                     break
         if lines:
-            end = start_idx + lines
+            end_idx = start_idx + lines
 
         content = content[start_idx:end_idx]
 
@@ -257,7 +257,7 @@ def includex(
 
             # lines in file start with 1
             start_lineno = start_idx + 1
-            end_lineno = end if end is not None else None
+            end_lineno = end_idx if end_idx is not None else None
             # indices might be negative
             if start_lineno < 0:
                 start_lineno = len(original_content) + start_lineno
@@ -289,7 +289,7 @@ def _parse_filepath_short_syntax(
     filepath, suffix = filepath.split(sep, maxsplit=1)
     if sep not in suffix:
         start = suffix
-        end = start # return single line if only start is given
+        end = start  # return single line if only start is given
     elif suffix.count(sep) == 1:
         start, end = suffix.split(sep)
     else:
@@ -298,10 +298,10 @@ def _parse_filepath_short_syntax(
         suffix = suffix.replace(f"'{sep}", token)
         suffix = suffix.replace(f"{sep}'", token)
         start, end = suffix.split(token, maxsplit=2)
-    
-    if start is not None start.isnumeric():
+
+    if start is not None and start.isnumeric():
         start = int(start)
-    
+
     if end is not None and end.isnumeric():
         end = int(end)
 
