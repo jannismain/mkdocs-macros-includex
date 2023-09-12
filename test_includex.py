@@ -54,19 +54,19 @@ def print_debug(expected, returned):
     print(f"RETURNED: {returned!r}")
 
 
-@pytest.fixture(autouse=True)
-def add_filepath_to_doctest(doctest_namespace, testfile):
-    print("preparing doctests...")
-    doctest_namespace["filepath"] = testfile
-
-
 @pytest.fixture()
 def testfile():
-    fp = tempfile.NamedTemporaryFile("w", delete=False)
+    fp = tempfile.NamedTemporaryFile("w", delete=False, suffix=".md")
     fp.write(content)
     fp.close()
     yield fp.name
     os.unlink(fp.name)
+
+
+@pytest.fixture(autouse=True)
+def add_filepath_to_doctest(doctest_namespace, testfile):
+    print("preparing doctests...")
+    doctest_namespace["filepath"] = testfile
 
 
 def test_include_full_file(testfile):
@@ -198,7 +198,7 @@ def test_automatic_dedent(testfile):
 
 
 def test_automatic_dedent_code_block(testfile):
-    args = dict(start_match="- third level", end_match="- fifth level", lang="yaml")
+    args = dict(start_match="- third level", end_match="- fifth level", code="yaml")
     expected = """```yaml\n- third level\n  - fourth level\n```"""
     returned = includex(testfile, **args)
     print_debug(expected, returned)
@@ -220,7 +220,7 @@ def test_render_caption():
     "caption", [False, True, "Included from testfile", "Excerpt from $(filename)s"]
 )
 def test_caption(testfile, caption):
-    args = dict(start_match="print", lines=1, lang="py", caption=caption)
+    args = dict(start_match="print", lines=1, code="py", caption=caption)
 
     expected = """```py\nprint("Hello, World!")\n```"""
     if caption:
@@ -265,7 +265,7 @@ def test_caption(testfile, caption):
     ],
 )
 def test_caption_lines(testfile, args, expected):
-    args.update(dict(caption=True, lang="txt"))  # ensure caption is generated
+    args.update(dict(caption=True, code=True))  # ensure caption is generated
     returned = includex(testfile, **args)
     print(returned)
     returned_caption = returned.rstrip().split("\n")[-1]
@@ -274,7 +274,7 @@ def test_caption_lines(testfile, args, expected):
 
 @pytest.mark.parametrize("alt_code_fences", [False, True, "..."])
 def test_alt_code_fences(testfile, alt_code_fences):
-    args = dict(start_match="print", lines=1, lang="py", alt_code_fences=alt_code_fences)
+    args = dict(start_match="print", lines=1, code="py", alt_code_fences=alt_code_fences)
 
     expected = 'print("Hello, World!")'
     if alt_code_fences is True:
@@ -302,10 +302,10 @@ def test_indent_raw(testfile, indent_first):
     assert returned == expected
 
 
-def test_raw_lang(testfile):
-    args = dict(raw=True, lang="foo")
+def test_raw_code(testfile):
+    args = dict(raw=True, code="foo")
     expected = "{% raw %}\n"
-    expected += f"```{args['lang']}\n"
+    expected += f"```{args['code']}\n"
     expected += content.rstrip()
     expected += "\n" + "```"
     expected += "\n" + "{% endraw %}"
@@ -333,6 +333,43 @@ def test_readme_example():
     expected = includex("README.md", start_match="```toml", end_match="```", include_end_match=True)
 
     assert actual.startswith(expected), "caption is different but included content should match"
+
+
+@pytest.mark.parametrize(
+    "filetype,kwargs,expected",
+    [
+        (".md", dict(code=True), "```md\n"),
+        (".md", dict(), content[:30]),
+    ],
+)
+def test_code_option(filetype, kwargs, expected, tmp_path):
+    with tempfile.NamedTemporaryFile("w", suffix=filetype, dir=tmp_path) as fp:
+        fp.write(content)
+        fp.seek(0)
+        assert includex(tmp_path / fp.name, **kwargs).startswith(expected)
+
+
+@pytest.mark.parametrize(
+    "kwargs,expected",
+    [
+        (dict(code=True, lang="py"), "```py\n"),  # lang should overwrite code
+    ],
+)
+def test_code_lang_interaction(testfile, kwargs, expected):
+    assert includex(testfile, **kwargs).startswith(expected)
+
+
+@pytest.mark.parametrize(
+    "code,lang",
+    [
+        (True, "md"),  # code block with default language (defaults to file suffix)
+        (False, None),  # no code block
+        ("py", "py"),  # code block with given language
+        ("", ""),  # code block without language
+    ],
+)
+def test_code_lang_sameness(testfile, code, lang):
+    assert includex(testfile, code=code) == includex(testfile, lang=lang)
 
 
 if __name__ == "__main__":

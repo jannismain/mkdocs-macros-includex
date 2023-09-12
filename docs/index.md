@@ -65,17 +65,25 @@ For replaced chraracters, a replace notice can be added:
 
 ### Wrap in code block
 
-{{ show_and_tell("includex('mkdocs.yml', lines=3, lang='yaml')", render_result=True) }}
+{{ show_and_tell("includex('mkdocs.yml', lines=3, lang='yml')", render_result=True) }}
+
+#### Override code language
+
+{{ show_and_tell("includex('README.md', start_match='pip install', lines=1, code='sh')", render_result=True) }}
+
+#### Do not include code language
+
+{{ show_and_tell("includex('mkdocs.yml', lines=3, code='')", render_result=True) }}
 
 ### Include a caption
 
-{{ show_and_tell("includex('mkdocs.yml', lines=3, lang='yaml', caption=True)", render_result=True) }}
+{{ show_and_tell("includex('mkdocs.yml', lines=3, code=True, caption=True)", render_result=True) }}
 
 #### Custom caption
 
-{{ show_and_tell("includex('mkdocs.yml', lines=3, lang='yaml', caption='*Excerpt from MkDocs configuration file*{.caption}')", render_result=True) }}
+{{ show_and_tell("includex('mkdocs.yml', lines=3, code=True, caption='*Excerpt from MkDocs configuration file*{.caption}')", render_result=True) }}
 
-{{ show_and_tell("includex('mkdocs.yml', lines=3, lang='yaml', caption='*Excerpt from %(filepath)s*{.caption}')", render_result=True) }}
+{{ show_and_tell("includex('mkdocs.yml', lines=3, code=True, caption='*Excerpt from %(filepath)s*{.caption}')", render_result=True) }}
 
 ### Wrap in `raw` tags
 

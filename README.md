@@ -26,7 +26,7 @@ Then you can use it to dynamically include file content in your documentation li
 
 The version number is defined in the `pyproject.toml` file:
 
-{{ includex("pyproject.toml", start_match="[tool.hatch.version]", lang="toml", lines=2, caption=True) }}
+{{ includex("pyproject.toml", start_match="[tool.hatch.version]", code=True, lines=2, caption=True) }}
 ```
 
 Would be rendered as

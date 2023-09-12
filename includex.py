@@ -1,6 +1,7 @@
 import pathlib
+from warnings import warn
 
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 
 
 def define_env(env):  # pragma: no cover
@@ -45,6 +46,7 @@ def includex(
     caption: bool | str = None,
     alt_code_fences: bool | str = False,
     suffix: str = "",
+    code: bool | str = False,
 ) -> str:
     r"""Include parts of a file.
 
@@ -105,6 +107,8 @@ def includex(
             this was added to support escaping an included file (using `raw`) but not have
             the raw-tags be part of the code block.
 
+            Deprecated since v0.0.4, use `code` instead.
+
         escape_notice: include note about escaped characters at the end
         replace_notice: include note about replaced strings at the end
         caption: include caption for code block
@@ -117,6 +121,13 @@ def includex(
             When a custom string is provided, it will be used as code fence marker instead.
 
         suffix: add this after the included content
+        code: render included content as code block
+
+            If `True`, the language will be inferred from the file extension.
+            If `""`, code block will be rendered without language.
+            Otherwise, the given string will be used as code language
+
+            Added in v0.0.4
 
     Returns:
         content of file at *filepath*, modified by remaining arguments
@@ -192,6 +203,18 @@ def includex(
             if not content[-1].endswith("\n"):
                 content[-1] += "\n"
             content[-1] += f"{suffix}\n"
+
+        if lang is not None:
+            warn(
+                "`lang` option is deprecated and will be removed in a future release. Use `code` instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+
+        if code is True and lang is None and filepath.suffix:
+            lang = filepath.suffixes[-1][1:]  # drop leading dot
+        elif isinstance(code, str):
+            lang = code
 
         if lang is not None:
             code_fence_marker = (
