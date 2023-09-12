@@ -7,7 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-[*see all changes*](https://github.com/jannismain/mkdocs-macros-includex/compare/v0.0.4...HEAD)
+[*see all changes*](https://github.com/jannismain/mkdocs-macros-includex/compare/v0.0.5...HEAD)
+
+## [0.0.5] - 2023-09-12
+[0.0.5]: https://github.com/jannismain/mkdocs-macros-includex/releases/tag/v0.0.5
+
+### Changed
+
+- **code**: Infer code language using `pygments`, if available (added as optional dependency)
+    - if `pygments` is not available, map some file extensions to pygments language (e.g. `yml` -> `yaml`)
+
+[*see all changes*](https://github.com/jannismain/mkdocs-macros-includex/compare/v0.0.4...v0.0.5)
 
 ## [0.0.4] - 2023-09-12
 [0.0.4]: https://github.com/jannismain/mkdocs-macros-includex/releases/tag/v0.0.4

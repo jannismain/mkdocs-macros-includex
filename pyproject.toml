@@ -11,6 +11,9 @@ license = "MIT"
 authors = [{ name = "Jannis Mainczyk", email = "jmainczyk@gmail.com" }]
 requires-python = ">=3.10"
 
+[project.optional-dependencies]
+pygments = ["pygments"]
+
 [tool.hatch.version]
 path = "includex.py"
 

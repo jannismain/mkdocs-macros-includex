@@ -1,7 +1,14 @@
 import pathlib
 from warnings import warn
 
-__version__ = "0.0.4"
+try:
+    import pygments
+
+    use_pygments = True
+except ImportError:
+    use_pygments = False
+
+__version__ = "0.0.5"
 
 
 def define_env(env):  # pragma: no cover
@@ -17,6 +24,12 @@ ESCAPE_NOTICE_TEMPLATE = (
 )
 ERROR_NOTICE_TEMPLATE = '<span class="error" style="color:red">%s</span>'
 CAPTION_TEMPLATE = "*%(filepath)s%(line)s*{.caption}"
+
+CODE_EXTENSION_TO_LANGUAGE = {"yml": "yaml", "j2": "jinja"}
+"""Map of file extensions to code language.
+
+Used when pygments is not available.
+"""
 
 
 def includex(
@@ -211,8 +224,11 @@ def includex(
                 stacklevel=2,
             )
 
-        if code is True and lang is None and filepath.suffix:
-            lang = filepath.suffixes[-1][1:]  # drop leading dot
+        if code is True and lang is None:
+            if use_pygments:
+                lang = _infer_lang_using_pygments(filepath, "".join(content))
+            if not use_pygments or lang is None:  # fallback in case pygments failed to guess lang
+                lang = _infer_lang_file_extension(filepath)
         elif isinstance(code, str):
             lang = code
 
@@ -289,6 +305,24 @@ def includex(
             if silence_errors
             else ERROR_NOTICE_TEMPLATE % (f"{e.__class__.__name__}" + (f": {e}" if f"{e}" else ""))
         )
+
+
+def _infer_lang_using_pygments(filepath, text):
+    """Infer language using pygments based on filename or content."""
+    try:
+        lexer = pygments.lexers.guess_lexer_for_filename(filepath.name, text)
+    except pygments.util.ClassNotFound:
+        try:
+            lexer = pygments.lexers.guess_lexer(text)
+        except pygments.util.ClassNotFound:
+            lexer = None
+    if lexer is not None:
+        return lexer.name
+
+
+def _infer_lang_file_extension(filepath):
+    file_extension = filepath.suffixes[-1][1:]
+    return CODE_EXTENSION_TO_LANGUAGE.get(file_extension, file_extension)
 
 
 def _render_caption(caption, filepath: pathlib.Path, start=0, end=0):
