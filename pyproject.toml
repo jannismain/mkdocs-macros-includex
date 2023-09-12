@@ -19,7 +19,17 @@ dependencies = ["coverage[toml]", "black", "pytest", "pytest-cov", "ruff"]
 [tool.hatch.envs.default.scripts]
 test = "hatch run test:test"
 docs = "hatch run docs:serve"
-release = "hatch run test:test && git tag -m 'bump version to '`hatch version` v`hatch version` --sign && git push --tags && hatch build && hatch publish"
+release = """\
+hatch run test:test
+git tag -m 'bump version to '`hatch version` v`hatch version` --sign
+git push --tags
+hatch build --clean
+hatch publish
+gh release create v`hatch version` \
+    --title v`hatch version` \
+    --notes '[CHANGELOG](https://github.com/jannismain/mkdocs-macros-includex/blob/main/CHANGELOG.md#`hatch version | tr -d .`---`date -Idate`)'
+gh release upload v`hatch version` dist/*.tar.gz dist/*.whl
+"""
 
 [tool.hatch.envs.test]
 dependencies = ["pytest", "pytest-cov"]
