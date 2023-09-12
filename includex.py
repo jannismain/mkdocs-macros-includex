@@ -146,11 +146,7 @@ def includex(
         content of file at *filepath*, modified by remaining arguments
     """
     # transform one-based indices into file to zero-based indices into arrays
-    if start > 0:
-        start_idx = start - 1
-    else:
-        start_idx = start
-
+    start_idx = start - 1 if start > 0 else start
     # end doesn't need to be adjusted here, as it is exclusive in Python but should be
     # inclusive (+1) and also is a one-based index (-1)
     end_idx = end
@@ -224,7 +220,8 @@ def includex(
 
         if lang is not None:
             warn(
-                "`lang` option is deprecated and will be removed in a future release. Use `code` instead.",
+                "`lang` option is deprecated and will be removed in a future release. "
+                "Use `code` instead.",
                 DeprecationWarning,
                 stacklevel=2,
             )
@@ -354,7 +351,7 @@ def show_and_tell(
 ):  # pragma: no cover
     original_command = command
     if alt_code_fences:
-        command = command[:-1] + f""", alt_code_fences={alt_code_fences})"""
+        command = f"""{command[:-1]}, alt_code_fences={alt_code_fences})"""
     result = eval(
         command,
         dict(
