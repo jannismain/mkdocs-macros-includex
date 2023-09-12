@@ -30,7 +30,7 @@ hatch build --clean
 hatch publish
 gh release create v`hatch version` \
     --title v`hatch version` \
-    --notes '[CHANGELOG](https://github.com/jannismain/mkdocs-macros-includex/blob/main/CHANGELOG.md#'`hatch version | tr -d .`'---'`date -Idate`')'
+    --notes '*[see changes](https://github.com/jannismain/mkdocs-macros-includex/blob/main/CHANGELOG.md#'`hatch version | tr -d .`'---'`date -Idate`')*'
 gh release upload v`hatch version` dist/*.tar.gz dist/*.whl
 """
 
