@@ -177,6 +177,11 @@ def includex(
                 if first_line_found and end_match and end_match in line:
                     end_idx = i + end_offset + (1 if include_end_match else 0)
                     break
+            else:
+                raise NoMatchError(
+                    f"Couldn't find match for {'end_match' if first_line_found else 'start_match'}="
+                    f"'{end_match if first_line_found else start_match}' in {filepath}"
+                )
         if lines:
             end_idx = start_idx + lines
 
@@ -366,3 +371,7 @@ def show_and_tell(
             result = eval(original_command, dict(includex=includex))
         rv += f"\n\n---\n\n{result}\n\n---\n"
     return rv
+
+
+class NoMatchError(Exception):
+    pass

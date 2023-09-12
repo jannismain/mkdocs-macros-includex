@@ -10,6 +10,7 @@ from includex import (
     ERROR_NOTICE_TEMPLATE,
     ESCAPE_NOTICE_TEMPLATE,
     REPLACE_NOTICE_TEMPLATE,
+    NoMatchError,
     _render_caption,
     includex,
 )
@@ -370,6 +371,21 @@ def test_code_lang_interaction(testfile, kwargs, expected):
 )
 def test_code_lang_sameness(testfile, code, lang):
     assert includex(testfile, code=code) == includex(testfile, lang=lang)
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        dict(start_match="NO MATCH"),
+        dict(end_match="NO MATCH"),
+        dict(start_match="NO MATCH", end_match="NO MATCH"),
+    ],
+)
+def test_no_match_error(testfile, kwargs):
+    """Test that error is raised and error message contains the option and value."""
+    option, value = list(kwargs.items())[0]
+    with pytest.raises(NoMatchError, match=rf".*{option}.*{value}.*"):
+        assert includex(testfile, **kwargs)
 
 
 if __name__ == "__main__":
