@@ -48,7 +48,6 @@ markdown_extensions:
   - attr_list
   - md_in_html
   - toc:
-      marker: ""
       permalink: "#"
       permalink_title: "Link to this section"
       toc_depth: 3
