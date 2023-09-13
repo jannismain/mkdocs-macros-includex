@@ -47,7 +47,6 @@ exclude_lines = ["if __name__ == .__main__.", "pragma: no cover"]
 python = ["3.10", "3.11"]
 
 [tool.hatch.envs.docs]
-detached = true
 dependencies = [
     "mkdocs-material",
     "mkdocs-macros-plugin",
