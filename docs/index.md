@@ -69,9 +69,15 @@ For replaced chraracters, a replace notice can be added:
 
 #### Override code language
 
+As the code language detection mainly works on the file extension of the included file, it will produce
+unwanted results if including snippets in another language (e.g. including shell instructions or python snippets from a Markdown file).
+In these cases, the intended language can be set manually:
+
 {{ show_and_tell("includex('README.md', start_match='pip install', lines=1, code='sh')", render_result=True) }}
 
-#### Do not include code language
+#### Do not set code language
+
+If you want to include a code block but do not want to include the code language for highlighting, simply set `code` to an empty string:
 
 {{ show_and_tell("includex('mkdocs.yml', lines=3, code='')", render_result=True) }}
 

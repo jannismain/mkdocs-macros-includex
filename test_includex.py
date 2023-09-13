@@ -11,6 +11,8 @@ from includex import (
     ESCAPE_NOTICE_TEMPLATE,
     REPLACE_NOTICE_TEMPLATE,
     NoMatchError,
+    _infer_code_language_file_extension,
+    _infer_code_language_pygments,
     _render_caption,
     includex,
 )
@@ -339,7 +341,7 @@ def test_readme_example():
 @pytest.mark.parametrize(
     "filetype,kwargs,expected",
     [
-        (".md", dict(code=True), "```md\n"),
+        (".md", dict(code=True), "```markdown\n"),
         (".md", dict(), content[:30]),
     ],
 )
@@ -363,7 +365,7 @@ def test_code_lang_interaction(testfile, kwargs, expected):
 @pytest.mark.parametrize(
     "code,lang",
     [
-        (True, "md"),  # code block with default language (defaults to file suffix)
+        (True, "markdown"),  # code block with default language (defaults to file suffix)
         (False, None),  # no code block
         ("py", "py"),  # code block with given language
         ("", ""),  # code block without language
@@ -386,6 +388,45 @@ def test_no_match_error(testfile, kwargs):
     option, value = list(kwargs.items())[0]
     with pytest.raises(NoMatchError, match=rf".*{option}.*{value}.*"):
         assert includex(testfile, **kwargs)
+
+
+def test_infer_language_no_pygments(testfile, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr("includex.use_pygments", False)
+    assert includex(testfile, code=True).startswith("```md\n")
+
+
+@pytest.mark.parametrize(
+    "testfile,expected",
+    [
+        ("includex.py", "python"),
+        ("test_includex.py", "python"),
+        ("mkdocs.yml", "yaml"),
+        ("pyproject.toml", "toml"),
+        ("README.md", "markdown"),
+        ("LICENSE", None),
+    ],
+)
+@pytest.mark.parametrize("path_type", [str, pathlib.Path])
+def test_infer_code_language_pygments(path_type, testfile, expected):
+    testfile = path_type(testfile)
+    assert _infer_code_language_pygments(testfile, open(testfile).read()) == expected
+
+
+@pytest.mark.parametrize(
+    "filename, expected",
+    [
+        ("file.py", "py"),
+        ("file.txt", "txt"),
+        ("file.TXT", "txt"),
+        ("file", ""),
+        ("file.tar.gz", "gz"),
+        ("file.with.multiple.extensions.and.dot.at.end.", ""),
+        (".", ""),
+    ],
+)
+@pytest.mark.parametrize("path_type", [str, pathlib.Path])
+def test_infer_code_language_file_extension(path_type, filename, expected):
+    assert _infer_code_language_file_extension(path_type(filename)) == expected
 
 
 if __name__ == "__main__":

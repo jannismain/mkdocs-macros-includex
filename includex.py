@@ -1,11 +1,13 @@
+import os
 import pathlib
 from warnings import warn
 
 try:
-    import pygments
+    from pygments.lexers import guess_lexer_for_filename
+    from pygments.util import ClassNotFound
 
     use_pygments = True
-except ImportError:
+except ImportError:  # pragma: no cover
     use_pygments = False
 
 __version__ = "0.0.5"
@@ -227,10 +229,7 @@ def includex(
             )
 
         if code is True and lang is None:
-            if use_pygments:
-                lang = _infer_lang_using_pygments(filepath, "".join(content))
-            if not use_pygments or lang is None:  # fallback in case pygments failed to guess lang
-                lang = _infer_lang_file_extension(filepath)
+            lang = _infer_code_language(filepath, "".join(content))
         elif isinstance(code, str):
             lang = code
 
@@ -309,21 +308,25 @@ def includex(
         )
 
 
-def _infer_lang_using_pygments(filepath, text):
+def _infer_code_language(filepath: str | pathlib.Path, text: str) -> str:
+    if use_pygments:
+        lang = _infer_code_language_pygments(filepath, text)
+    if not use_pygments or lang is None:  # fallback in case pygments failed to guess lang
+        lang = _infer_code_language_file_extension(filepath)
+    return lang.lower()
+
+
+def _infer_code_language_pygments(filepath: str | pathlib.Path, text: str) -> str | None:
     """Infer language using pygments based on filename or content."""
     try:
-        lexer = pygments.lexers.guess_lexer_for_filename(filepath.name, text)
-    except pygments.util.ClassNotFound:
-        try:
-            lexer = pygments.lexers.guess_lexer(text)
-        except pygments.util.ClassNotFound:
-            lexer = None
-    if lexer is not None:
-        return lexer.name
+        return guess_lexer_for_filename(filepath, text).name.lower()
+    except ClassNotFound:
+        return None
 
 
-def _infer_lang_file_extension(filepath):
-    file_extension = filepath.suffixes[-1][1:]
+def _infer_code_language_file_extension(filepath: str | pathlib.Path) -> str:
+    _, file_extension = os.path.splitext(filepath)
+    file_extension = file_extension[1:].lower()
     return CODE_EXTENSION_TO_LANGUAGE.get(file_extension, file_extension)
 
 

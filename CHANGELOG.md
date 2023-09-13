@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [*see all changes*](https://github.com/jannismain/mkdocs-macros-includex/compare/v0.0.5...HEAD)
 
+### Changed
+
+- **code**: only infer code block language based on extension of included file.
+    - pygments' `guess_lexer` fails to work on the most obvious snippets while producing false-positives for others.
+
 ## [0.0.5] - 2023-09-12
 [0.0.5]: https://github.com/jannismain/mkdocs-macros-includex/releases/tag/v0.0.5
 

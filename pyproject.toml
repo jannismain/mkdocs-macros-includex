@@ -35,7 +35,7 @@ gh release upload v`hatch version` dist/*.tar.gz dist/*.whl
 """
 
 [tool.hatch.envs.test]
-dependencies = ["pytest", "pytest-cov"]
+dependencies = ["pytest", "pytest-cov", "pygments"]
 scripts = { "test" = "pytest --cov-config=pyproject.toml --cov-report=term-missing --cov-report html:build/coverage --cov=includex --cov=test_includex" }
 
 [tool.coverage.report]
@@ -47,6 +47,7 @@ exclude_lines = ["if __name__ == .__main__.", "pragma: no cover"]
 python = ["3.10", "3.11"]
 
 [tool.hatch.envs.docs]
+detached = true
 dependencies = [
     "mkdocs-material",
     "mkdocs-macros-plugin",
