@@ -36,7 +36,7 @@ gh release upload v`hatch version` dist/*.tar.gz dist/*.whl
 
 [tool.hatch.envs.test]
 dependencies = ["pytest", "pytest-cov", "pygments"]
-scripts = { "test" = "pytest --cov-config=pyproject.toml --cov-report=term-missing --cov-report html:build/coverage --cov=includex --cov=test_includex" }
+scripts = { "test" = "pytest --cov-config=pyproject.toml --cov-report=term-missing --cov-report html:build/coverage --cov=includex --cov=test_includex --cov-report xml" }
 
 [tool.coverage.report]
 omit = ["**/setup.py", "**/__init__.py", "**/__main__.py"]
