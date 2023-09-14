@@ -1,6 +1,6 @@
 # `includex`
 
-[![Coverage Status](https://coveralls.io/repos/github/jannismain/mkdocs-macros-includex/badge.svg?branch=main)](https://coveralls.io/github/jannismain/mkdocs-macros-includex?branch=main)
+[![coverage](https://codecov.io/gh/jannismain/mkdocs-macros-includex/graph/badge.svg?token=852ISA32PH)](https://codecov.io/gh/jannismain/mkdocs-macros-includex)
 
 Use `includex` to **include** *anything* from any file into your markdown documentation.
 
