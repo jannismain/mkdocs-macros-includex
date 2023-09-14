@@ -21,7 +21,7 @@ plugins:
       modules: ['includex']
 ```
 
-Then you can use it to dynamically include file content in your documentation like this:
+Then you can use it to dynamically include file content in your documentation
 
 ```md
 ### Versioning
@@ -31,7 +31,7 @@ The version number is defined in the `pyproject.toml` file:
 {{ includex("pyproject.toml", start_match="[tool.hatch.version]", code=True, lines=2, caption=True) }}
 ```
 
-Would be rendered as
+which would be rendered as
 
 ---
 
@@ -52,6 +52,12 @@ path = "includex.py"
 ## Comparison to other tools
 
 ### snippets (pymdown-extensions)
+
+**tl;dr**
+
+- use *snippets* if you want to recursively include content
+- use *includex* if you want to include content within macros
+- use *includex* if you want to include sections without special markers
 
 The main use case this solves over *[snippets][]* is that it includes partial content (i.e. a section or block) from a file as-is (i.e. without the need for special markers).
 
