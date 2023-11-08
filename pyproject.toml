@@ -26,6 +26,8 @@ release = """\
 hatch run test:test
 git tag -m 'bump version to '`hatch version` v`hatch version` --sign
 git push --tags
+echo "Forgot anything? Press CTRL+C to abort..."
+sleep 5
 hatch build --clean
 hatch publish
 gh release create v`hatch version` \
