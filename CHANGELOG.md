@@ -7,7 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-[*see all changes*](https://github.com/jannismain/mkdocs-macros-includex/compare/v0.0.5...HEAD)
+[*see all changes*](https://github.com/jannismain/mkdocs-macros-includex/compare/v0.0.6...HEAD)
+
+## [0.0.6] - 2023-11-08
+[0.0.6]: https://github.com/jannismain/mkdocs-macros-includex/releases/tag/v0.0.6
+
+[*see all changes*](https://github.com/jannismain/mkdocs-macros-includex/compare/v0.0.5...v0.0.6)
 
 ### Added
 
@@ -15,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- an error is now raised when `start_match` or `end_match` are provided but don't match any line in the included content. Previously, the content was included in full if no match was found.
 - **code**: only infer code block language based on extension of included file.
     - pygments' `guess_lexer` fails to work on the most obvious snippets while producing false-positives for others.
 

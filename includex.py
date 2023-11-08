@@ -12,7 +12,7 @@ try:
 except ImportError:  # pragma: no cover
     use_pygments = False
 
-__version__ = "0.0.5"
+__version__ = "0.0.6"
 
 
 def define_env(env):  # pragma: no cover
