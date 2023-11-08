@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [*see all changes*](https://github.com/jannismain/mkdocs-macros-includex/compare/v0.0.5...HEAD)
 
+### Added
+
+- support older Python versions up to 3.7
+
 ### Changed
 
 - **code**: only infer code block language based on extension of included file.

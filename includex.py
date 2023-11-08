@@ -1,3 +1,5 @@
+from __future__ import annotations  # compatibility with
+
 import os
 import pathlib
 from warnings import warn

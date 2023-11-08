@@ -9,7 +9,7 @@ description = "Provides the `includex` macro for more flexible includes."
 readme = "README.md"
 license = "MIT"
 authors = [{ name = "Jannis Mainczyk", email = "jmainczyk@gmail.com" }]
-requires-python = ">=3.10"
+requires-python = ">=3.7"
 
 [project.optional-dependencies]
 pygments = ["pygments"]
@@ -44,7 +44,7 @@ exclude_lines = ["if __name__ == .__main__.", "pragma: no cover"]
 
 
 [[tool.hatch.envs.test.matrix]]
-python = ["3.10", "3.11"]
+python = ["3.7", "3.8", "3.9", "3.10", "3.11"]
 
 [tool.hatch.envs.docs]
 dependencies = [
