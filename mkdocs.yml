@@ -31,8 +31,10 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
-          import:
-            - https://docs.python.org/3/objects.inv
+          options:
+            inventories:
+              - url: https://docs.python.org/3/objects.inv
+                domains: [std, py]
   - autorefs
 
 markdown_extensions:
