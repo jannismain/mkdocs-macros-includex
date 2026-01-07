@@ -11,6 +11,9 @@ license = "MIT"
 authors = [{ name = "Jannis Mainczyk", email = "jmainczyk@gmail.com" }]
 requires-python = ">=3.7"
 
+[tool.hatch.build.targets.wheel]
+packages = ["includex.py"]
+
 [project.optional-dependencies]
 pygments = ["pygments"]
 
@@ -18,6 +21,7 @@ pygments = ["pygments"]
 path = "includex.py"
 
 [tool.hatch.envs.default]
+installer = "uv"
 dependencies = ["coverage[toml]", "black", "pytest", "pytest-cov", "ruff"]
 [tool.hatch.envs.default.scripts]
 test = "hatch run test:test"
@@ -38,7 +42,8 @@ gh release upload v`hatch version` dist/*.tar.gz dist/*.whl
 
 [tool.hatch.envs.test]
 dependencies = ["pytest", "pytest-cov", "pygments"]
-scripts = { "test" = "pytest --cov-config=pyproject.toml --cov-report=term-missing --cov-report html:build/coverage --cov=includex --cov=test_includex --cov-report xml" }
+[tool.hatch.envs.test.scripts]
+test = "pytest --cov-config=pyproject.toml --cov-report=term-missing --cov-report html:build/coverage --cov=includex --cov=test_includex --cov-report xml"
 
 [tool.coverage.report]
 omit = ["**/setup.py", "**/__init__.py", "**/__main__.py"]
