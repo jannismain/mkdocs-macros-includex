@@ -74,10 +74,10 @@ def add_filepath_to_doctest(doctest_namespace, testfile):
 
 def test_include_full_file(testfile):
     """Include all content from file."""
-    expected = content
+    expected = content.rstrip()  # includex strips trailing whitespace by default
     returned = includex(testfile)
     print_debug(expected, returned)
-    assert returned == returned
+    assert returned == expected
 
 
 def test_include_first_lines(testfile):
